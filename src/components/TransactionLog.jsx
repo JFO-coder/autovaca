@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, Trash2, Undo2, Download, X, AlertTriangle } from 'lucide-react'
+import { Search, Trash2, Undo2, Download, FileText, X, AlertTriangle } from 'lucide-react'
 
 export default function TransactionLog({ transactions, participants, groupId, onTransactionDeleted }) {
   const [search, setSearch] = useState('')
@@ -43,7 +43,11 @@ export default function TransactionLog({ transactions, participants, groupId, on
   async function handleDelete(txn) {
     try {
       const { deleteTransaction } = await import('../services/firestore')
-      await deleteTransaction(groupId, txn.id)
+      await deleteTransaction(groupId, txn.id, {
+        concept: txn.concept,
+        amountUSD: txn.amountUSD,
+        paidBy: txn.paidBy
+      })
       // Push to undo stack
       setDeletedStack(prev => [...prev, txn])
       setDeleteConfirm(null)
@@ -72,6 +76,57 @@ export default function TransactionLog({ transactions, participants, groupId, on
     } catch (err) {
       console.error('Undo failed:', err)
       alert('Error al deshacer: ' + err.message)
+    }
+  }
+
+  async function handleExportAuditLog() {
+    try {
+      const { getAuditLog } = await import('../services/firestore')
+      const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs')
+      const logs = await getAuditLog(groupId)
+
+      if (logs.length === 0) {
+        alert('No hay entradas en el audit log.')
+        return
+      }
+
+      const rows = logs.map(entry => ({
+        Timestamp: entry.timestamp instanceof Date
+          ? entry.timestamp.toISOString()
+          : String(entry.timestamp || ''),
+        Action: entry.action || '',
+        'Performed By': entry.performedBy || '',
+        'Transaction ID': entry.details?.transactionId || '',
+        Concept: entry.details?.concept || '',
+        'Amount USD': entry.details?.amountUSD != null ? Number(entry.details.amountUSD).toFixed(2) : '',
+        'Paid By': entry.details?.paidBy || ''
+      }))
+
+      // XLSX
+      const ws = XLSX.utils.json_to_sheet(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Audit Log')
+      const colWidths = Object.keys(rows[0]).map(key => ({
+        wch: Math.max(key.length, ...rows.map(r => String(r[key] || '').length)) + 2
+      }))
+      ws['!cols'] = colWidths
+      XLSX.writeFile(wb, `audit_log_${new Date().toISOString().slice(0, 10)}.xlsx`)
+
+      // CSV
+      const csvHeader = Object.keys(rows[0]).join(',')
+      const csvRows = rows.map(r =>
+        Object.values(r).map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+      )
+      const csvContent = [csvHeader, ...csvRows].join('\n')
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = `audit_log_${new Date().toISOString().slice(0, 10)}.csv`
+      link.click()
+      URL.revokeObjectURL(link.href)
+    } catch (err) {
+      console.error('Audit log export failed:', err)
+      alert('Error exportando audit log: ' + err.message)
     }
   }
 
@@ -130,6 +185,14 @@ export default function TransactionLog({ transactions, participants, groupId, on
           >
             <Download className="h-3.5 w-3.5" />
             Excel
+          </button>
+          <button
+            onClick={handleExportAuditLog}
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-200 transition-colors"
+            title="Exportar Audit Log (xlsx + csv)"
+          >
+            <FileText className="h-3.5 w-3.5" />
+            Audit Log
           </button>
           <span className="text-sm text-gray-500">{filtered.length} entries</span>
         </div>

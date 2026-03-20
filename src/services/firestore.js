@@ -7,7 +7,35 @@ import {
   collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc,
   query, orderBy, where, serverTimestamp, Timestamp
 } from 'firebase/firestore'
-import { db } from '../firebase'
+import { db, auth } from '../firebase'
+
+// ─── Audit Log ────────────────────────────────────────────
+
+export async function writeAuditLog(groupId, action, details = {}) {
+  const email = auth.currentUser?.email || 'unknown'
+  await addDoc(collection(db, 'groups', groupId, 'auditLog'), {
+    timestamp: serverTimestamp(),
+    action,
+    performedBy: email,
+    details
+  })
+}
+
+export async function getAuditLog(groupId) {
+  const q = query(
+    collection(db, 'groups', groupId, 'auditLog'),
+    orderBy('timestamp', 'desc')
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(d => {
+    const data = d.data()
+    return {
+      id: d.id,
+      ...data,
+      timestamp: data.timestamp?.toDate?.() || data.timestamp
+    }
+  })
+}
 
 // ─── Groups ───────────────────────────────────────────────
 
@@ -51,6 +79,13 @@ export async function addTransaction(groupId, txnData) {
       migrated: txnData.migrated || false
     }
   )
+  // Audit log
+  await writeAuditLog(groupId, 'transaction_created', {
+    transactionId: ref.id,
+    concept: txnData.concept || '',
+    amountUSD: txnData.amountUSD || 0,
+    paidBy: txnData.paidBy || ''
+  })
   return ref.id
 }
 
@@ -91,8 +126,15 @@ export async function updateTransaction(groupId, txnId, data) {
   await updateDoc(doc(db, 'groups', groupId, 'transactions', txnId), data)
 }
 
-export async function deleteTransaction(groupId, txnId) {
+export async function deleteTransaction(groupId, txnId, txnDetails = {}) {
   await deleteDoc(doc(db, 'groups', groupId, 'transactions', txnId))
+  // Audit log
+  await writeAuditLog(groupId, 'transaction_deleted', {
+    transactionId: txnId,
+    concept: txnDetails.concept || '',
+    amountUSD: txnDetails.amountUSD || 0,
+    paidBy: txnDetails.paidBy || ''
+  })
 }
 
 // ─── Settlements ──────────────────────────────────────────

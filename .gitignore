@@ -5,5 +5,6 @@ dist
 *.log
 .firebase
 dist-test/
+dist-build/
 vite.config.js.timestamp-*.mjs
 package-lock.json

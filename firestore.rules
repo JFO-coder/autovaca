@@ -32,6 +32,11 @@ service cloud.firestore {
         allow read: if true;
         allow write: if isAuthorizedBrother();
       }
+
+      match /auditLog/{logId} {
+        allow read: if isAuthorizedBrother();
+        allow write: if isAuthorizedBrother();
+      }
     }
   }
 }
