@@ -147,6 +147,8 @@ export default function App() {
                   <TransactionLog
                     transactions={transactions}
                     participants={activeGroup.participants}
+                    groupId={activeGroup.id}
+                    onTransactionDeleted={() => loadTransactions()}
                   />
                 )}
                 {activeTab === 'settlement' && (

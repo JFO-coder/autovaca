@@ -32,11 +32,22 @@ export default function LoginPage({ onLogin }) {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center px-4 text-center">
-          {/* Mascot */}
+          {/* Mascot - positioned to the right so it doesn't cover brothers' faces */}
           <img
             src="/autovaca-mascot.svg"
             alt="AutoVaca"
-            className="w-32 h-32 mb-6 drop-shadow-2xl"
+            className="absolute w-36 h-36 drop-shadow-2xl hidden md:block"
+            style={{
+              filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))',
+              right: '8%',
+              top: '10%',
+            }}
+          />
+          {/* Mascot for mobile - inline, smaller */}
+          <img
+            src="/autovaca-mascot.svg"
+            alt="AutoVaca"
+            className="w-24 h-24 mb-4 drop-shadow-2xl md:hidden"
             style={{ filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))' }}
           />
 
