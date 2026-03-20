@@ -21,7 +21,8 @@ export default function ShareView({ lastTransaction, transactions, participants,
   const transfers = useMemo(
     () => computeMinimumTransfers(balances),
     [balances]
-  
+  )
+
   function formatDate(d) {
     if (!d) return '—'
     const date = d instanceof Date ? d : new Date(d)
@@ -97,6 +98,5 @@ export default function ShareView({ lastTransaction, transactions, participants,
         autovaca · {new Date().toLocaleDateString('es-CL')}
       </div>
     </div>
-  
-  }
+  )
 }
