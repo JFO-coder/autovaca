@@ -60,14 +60,14 @@ export default function TarjetaMamaView({ transactions, participants }) {
         <div className="space-y-4">
           {yearlyData.map(yd => (
             <div key={yd.year} className="bg-gray-800/50 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
+              <div className="flex flex-wrap justify-between items-start gap-2 mb-3">
+                <div className="min-w-0">
                   <span className="text-xl font-bold text-yellow-400">{yd.year}</span>
                   <span className="text-sm text-gray-500 ml-2">({yd.months} months)</span>
                 </div>
-                <div className="text-right">
+                <div className="text-right min-w-0">
                   <div className="font-mono font-bold text-lg">${yd.total.toFixed(2)}</div>
-                  <div className="text-xs text-gray-500">${yd.perBrother.toFixed(2)} per brother · ${yd.monthlyAvg.toFixed(2)}/mo</div>
+                  <div className="text-xs text-gray-500 truncate">${yd.perBrother.toFixed(2)} per brother · ${yd.monthlyAvg.toFixed(2)}/mo</div>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 mb-3">
@@ -82,9 +82,9 @@ export default function TarjetaMamaView({ transactions, participants }) {
                 <summary className="text-gray-500 cursor-pointer hover:text-gray-400">Monthly detail</summary>
                 <div className="mt-2 space-y-1">
                   {yd.transactions.map(txn => (
-                    <div key={txn.id} className="flex justify-between text-gray-400">
-                      <span>{formatDate(txn.date)} · {participantMap[txn.paidBy]}</span>
-                      <span className="font-mono">${txn.amountUSD?.toFixed(2)}</span>
+                    <div key={txn.id} className="flex justify-between gap-2 text-gray-400">
+                      <span className="min-w-0 truncate">{formatDate(txn.date)} · {participantMap[txn.paidBy]}</span>
+                      <span className="font-mono flex-shrink-0">${txn.amountUSD?.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>

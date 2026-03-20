@@ -52,11 +52,11 @@ export default function SettlementView({ transactions, participants }) {
           <div className="space-y-3">
             {transfers.map((t, i) => (
               <div key={i}
-                className="flex items-center gap-3 bg-gray-800/50 rounded-lg p-3">
-                <span className="text-red-400 font-medium">{t.from.name}</span>
-                <ArrowRight className="h-4 w-4 text-gray-500" />
-                <span className="text-green-400 font-medium">{t.to.name}</span>
-                <span className="ml-auto font-mono font-semibold text-yellow-400">
+                className="flex flex-wrap items-center gap-2 sm:gap-3 bg-gray-800/50 rounded-lg p-3">
+                <span className="text-red-400 font-medium min-w-0 truncate">{t.from.name}</span>
+                <ArrowRight className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                <span className="text-green-400 font-medium min-w-0 truncate">{t.to.name}</span>
+                <span className="ml-auto font-mono font-semibold text-yellow-400 flex-shrink-0">
                   ${t.amountUSD.toFixed(2)}
                 </span>
               </div>

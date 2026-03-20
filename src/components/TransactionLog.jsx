@@ -110,7 +110,7 @@ export default function TransactionLog({ transactions, participants, groupId, on
 
   return (
     <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h2 className="text-lg font-semibold text-emerald-400">Transactions</h2>
         <div className="flex items-center gap-3">
           {deletedStack.length > 0 && (
@@ -136,7 +136,7 @@ export default function TransactionLog({ transactions, participants, groupId, on
       </div>
 
       {/* Search & Filter */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
           <input
@@ -148,7 +148,7 @@ export default function TransactionLog({ transactions, participants, groupId, on
           />
         </div>
         <select
-          className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 w-40 focus:outline-none focus:border-emerald-500"
+          className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 w-full sm:w-40 focus:outline-none focus:border-emerald-500"
           value={filterCategory}
           onChange={e => setFilterCategory(e.target.value)}
         >
@@ -218,7 +218,7 @@ export default function TransactionLog({ transactions, participants, groupId, on
               {/* Delete button - visible on hover */}
               <button
                 onClick={() => setDeleteConfirm(txn)}
-                className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all p-1"
+                className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all p-1"
                 title="Eliminar transacción"
               >
                 <Trash2 className="h-4 w-4" />
