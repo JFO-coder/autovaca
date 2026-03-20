@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Receipt, BarChart3, CreditCard, Share2, List } from 'lucide-react'
+import { Receipt, BarChart3, CreditCard, Share2, List, LogOut } from 'lucide-react'
 import Dashboard from './components/Dashboard'
 import TransactionForm from './components/TransactionForm'
 import TransactionLog from './components/TransactionLog'
 import SettlementView from './components/SettlementView'
 import ShareView from './components/ShareView'
 import TarjetaMamaView from './components/TarjetaMamaView'
+import LoginPage from './components/LoginPage'
+import { useAuth } from './hooks/useAuth'
 import { getTransactions } from './services/firestore'
 
 const TABS = [
@@ -17,6 +19,7 @@ const TABS = [
 ]
 
 export default function App() {
+  const { user, loading: authLoading, loginWithGoogle, logout } = useAuth()
   const [activeGroup, setActiveGroup] = useState(null)
   const [activeTab, setActiveTab] = useState('entry')
   const [transactions, setTransactions] = useState([])
@@ -43,7 +46,7 @@ export default function App() {
   function handleTransactionAdded(txn) {
     setLastTransaction(txn)
     loadTransactions()
-    setActiveTab('share') // Auto-switch to share view after adding
+    setActiveTab('share')
   }
 
   function handleSelectGroup(group) {
@@ -52,22 +55,49 @@ export default function App() {
     setLastTransaction(null)
   }
 
+  // Auth loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <img src="/autovaca-mascot.svg" alt="AutoVaca" className="w-16 h-16 animate-pulse" />
+      </div>
+    )
+  }
+
+  // Not logged in → show login page
+  if (!user) {
+    return <LoginPage onLogin={loginWithGoogle} />
+  }
+
+  // Logged in → show app
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-primary-400">
-            Autovaca
-            {activeGroup && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
-                · {activeGroup.name}
-              </span>
-            )}
-          </h1>
-          <div className="text-xs text-gray-600">
-            {transactions.length} transactions
-          </diw>
+          <div className="flex items-center gap-3">
+            <img src="/autovaca-mascot.svg" alt="" className="w-8 h-8" />
+            <h1 className="text-xl font-bold text-emerald-400">
+              AutoVaca
+              {activeGroup && (
+                <span className="text-sm font-normal text-gray-500 ml-2">
+                  · {activeGroup.name}
+                </span>
+              )}
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-500">
+              {user.displayName || user.email}
+            </span>
+            <button
+              onClick={logout}
+              className="text-gray-500 hover:text-gray-300 transition-colors"
+              title="Cerrar sesión"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -89,7 +119,7 @@ export default function App() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1 justify-center ${
                       activeTab === tab.id
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-emerald-600 text-white'
                         : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
                     }`}
                   >
@@ -143,7 +173,7 @@ export default function App() {
             )}
 
             {!activeGroup && (
-              <div className="card text-center text-gray-500 py-12">
+              <div className="bg-gray-900 rounded-xl border border-gray-800 text-center text-gray-500 py-12">
                 Select or create a group to get started
               </div>
             )}
@@ -151,5 +181,5 @@ export default function App() {
         </div>
       </div>
     </div>
-  
-  RCETRN RC
+  )
+}
