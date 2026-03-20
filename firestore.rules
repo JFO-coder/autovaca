@@ -1,33 +1,36 @@
 rules_version = '2';
 
-// Autovaca Firestore Security Rules
-// Test mode: open read/write until April 17, 2026
-// Production: read = public, write = authenticated (Juan only)
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // FX rates cache — readable by anyone, writable by authenticated users
-    match /fxRates/{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
+    // Only these 4 brothers can write
+    function isAuthorizedBrother() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'jfordonez@gmail.com',
+          'ordonezmariano@gmail.com',
+          'ordonez.ignacio@gmail.com',
+          'augusto.ordonez@gmail.com'
+        ];
     }
 
-    // Groups — readable by anyone (public transparency), writable by authenticated users
+    match /fxRates/{document=**} {
+      allow read: if true;
+      allow write: if isAuthorizedBrother();
+    }
+
     match /groups/{groupId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthorizedBrother();
 
-      // Transactions — same rules
       match /transactions/{txnId} {
         allow read: if true;
-        allow write: if request.auth != null;
+        allow write: if isAuthorizedBrother();
       }
 
-      // Settlements — same rules
       match /settlements/{settlementId} {
         allow read: if true;
-        allow write: if request.auth != null;
+        allow write: if isAuthorizedBrother();
       }
     }
   }

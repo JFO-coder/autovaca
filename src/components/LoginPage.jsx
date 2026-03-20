@@ -18,46 +18,47 @@ export default function LoginPage({ onLogin }) {
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
       {/* Hero section with photo background */}
-      <div className="relative flex-1 flex flex-col items-center justify-center overflow-hidden">
-        {/* Background photo */}
+      <div className="relative flex-1 flex flex-col justify-center overflow-hidden">
+        {/* Background photo — brighter, more visible */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: 'url(/brothers-hero.jpg)',
-            filter: 'brightness(0.3) sepia(0.3)',
+            filter: 'brightness(0.65) sepia(0.2)',
           }}
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-gray-950/40 to-gray-950" />
+        {/* Subtle gradient for text readability */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to bottom, rgba(3,7,18,0.15) 0%, rgba(3,7,18,0.5) 45%, rgba(3,7,18,0.85) 75%, rgba(3,7,18,1) 100%)'
+        }} />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center px-4 text-center">
-          {/* Mascot - positioned to the right so it doesn't cover brothers' faces */}
-          <img
-            src="/autovaca-mascot.svg"
-            alt="AutoVaca"
-            className="absolute w-36 h-36 drop-shadow-2xl hidden md:block"
-            style={{
-              filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))',
-              right: '8%',
-              top: '10%',
-            }}
-          />
+        {/* Mascot - bottom right, tilted as if standing on the shore */}
+        <img
+          src="/autovaca-mascot.svg"
+          alt="AutoVaca"
+          className="absolute w-44 h-44 drop-shadow-2xl hidden md:block z-10"
+          style={{
+            filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
+            right: '6%',
+            bottom: '8%',
+            transform: 'rotate(-8deg)',
+          }}
+        />
+
+        {/* Content — positioned center-left, over the lower body area */}
+        <div className="relative z-10 flex flex-col items-center px-4 text-center" style={{ marginTop: '25vh' }}>
           {/* Mascot for mobile - inline, smaller */}
           <img
             src="/autovaca-mascot.svg"
             alt="AutoVaca"
-            className="w-24 h-24 mb-4 drop-shadow-2xl md:hidden"
-            style={{ filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))' }}
+            className="w-20 h-20 mb-3 drop-shadow-2xl md:hidden"
+            style={{ filter: 'drop-shadow(0 0 12px rgba(74, 222, 128, 0.3))' }}
           />
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">
+          <h1 className="text-5xl font-bold text-white mb-6 tracking-tight" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.7)' }}>
             Auto<span className="text-emerald-400">Vaca</span>
           </h1>
-          <p className="text-gray-400 text-lg mb-8 max-w-md">
-            La vaquita automática de los hermanos Ordóñez
-          </p>
 
           {/* Sign in button */}
           <button
@@ -79,20 +80,13 @@ export default function LoginPage({ onLogin }) {
           {error && (
             <p className="mt-4 text-red-400 text-sm">{error}</p>
           )}
-
-          {/* Read-only link */}
-          <p className="mt-12 text-gray-600 text-sm">
-            ¿Solo querés ver los gastos?{' '}
-            <a href="/view/hermanos" className="text-emerald-500 hover:text-emerald-400 underline">
-              Ver como invitado
-            </a>
-          </p>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 text-center py-4 text-gray-700 text-xs">
-        Ordóñez Bros · Desde la Patagonia con amor 🐄
+      <footer className="relative z-10 text-center py-4 text-gray-600 text-xs flex items-center justify-center gap-1.5">
+        With love, LPR
+        <img src="/autovaca-mascot.svg" alt="" className="w-4 h-4 inline-block" />
       </footer>
     </div>
   )
