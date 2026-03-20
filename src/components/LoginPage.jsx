@@ -32,16 +32,16 @@ export default function LoginPage({ onLogin }) {
           background: 'linear-gradient(to bottom, rgba(3,7,18,0.15) 0%, rgba(3,7,18,0.5) 45%, rgba(3,7,18,0.85) 75%, rgba(3,7,18,1) 100%)'
         }} />
 
-        {/* Mascot - bottom right, tilted as if standing on the shore */}
+        {/* Mascot - bottom right, standing on the shore between last brother and mountain */}
         <img
           src="/autovaca-mascot.svg"
           alt="AutoVaca"
-          className="absolute w-44 h-44 drop-shadow-2xl hidden md:block z-10"
+          className="absolute w-40 h-40 drop-shadow-2xl hidden md:block z-10"
           style={{
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
-            right: '6%',
-            bottom: '8%',
-            transform: 'rotate(-8deg)',
+            right: '18%',
+            bottom: '4%',
+            transform: 'rotate(-3deg)',
           }}
         />
 
