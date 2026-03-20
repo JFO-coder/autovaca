@@ -4,3 +4,6 @@ dist
 .env.local
 *.log
 .firebase
+dist-test/
+vite.config.js.timestamp-*.mjs
+package-lock.json
