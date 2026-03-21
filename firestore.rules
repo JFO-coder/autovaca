@@ -3,7 +3,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Only these 4 brothers can write
     function isAuthorizedBrother() {
       return request.auth != null &&
         request.auth.token.email in [
@@ -14,29 +13,20 @@ service cloud.firestore {
         ];
     }
 
-    match /fxRates/{document=**} {
-      allow read: if true;
-      allow write: if isAuthorizedBrother();
-    }
-
     match /groups/{groupId} {
-      allow read: if true;
-      allow write: if isAuthorizedBrother();
+      allow read, write: if isAuthorizedBrother();
 
       match /transactions/{txnId} {
-        allow read: if true;
-        allow write: if isAuthorizedBrother();
+        allow read, write: if isAuthorizedBrother();
       }
 
       match /settlements/{settlementId} {
-        allow read: if true;
-        allow write: if isAuthorizedBrother();
+        allow read, write: if isAuthorizedBrother();
       }
+    }
 
-      match /auditLog/{logId} {
-        allow read: if isAuthorizedBrother();
-        allow write: if isAuthorizedBrother();
-      }
+    match /fxRates/{docId} {
+      allow read, write: if isAuthorizedBrother();
     }
   }
 }

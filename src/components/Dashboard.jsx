@@ -2,12 +2,18 @@ import { useState, useEffect } from 'react'
 import { Users, Plus, Archive } from 'lucide-react'
 import { getGroups, createGroup } from '../services/firestore'
 
+const GROUP_TYPE_LABELS = {
+  ongoing: 'Ongoing',
+  one_off: 'One off',
+  trip: 'One off'
+}
+
 export default function Dashboard({ onSelectGroup, activeGroup }) {
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [showNewGroup, setShowNewGroup] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
-  const [newGroupType, setNewGroupType] = useState('trip')
+  const [newGroupType, setNewGroupType] = useState('one_off')
   const [newParticipants, setNewParticipants] = useState('')
 
   useEffect(() => {
@@ -62,7 +68,7 @@ export default function Dashboard({ onSelectGroup, activeGroup }) {
           <input type="text" className="input-field" placeholder="Group name" value={newGroupName} onChange={e => setNewGroupName(e.target.value)} required />
           <select className="input-field" value={newGroupType} onChange={e => setNewGroupType(e.target.value)}>
             <option value="ongoing">Ongoing</option>
-            <option value="trip">Trip</option>
+            <option value="one_off">One off</option>
           </select>
           <input type="text" className="input-field" placeholder="Participants (comma-separated)" value={newParticipants} onChange={e => setNewParticipants(e.target.value)} required />
           <div className="flex gap-2">
@@ -81,7 +87,7 @@ export default function Dashboard({ onSelectGroup, activeGroup }) {
               {g.archived ? <Archive className="h-4 w-4 text-gray-500" /> : <Users className="h-4 w-4 text-primary-400" />}
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm">{g.name}</div>
-                <div className="text-xs text-gray-500">{g.participants?.length} participants · {g.type}</div>
+                <div className="text-xs text-gray-500">{g.participants?.length} participants · {GROUP_TYPE_LABELS[g.type] || g.type}</div>
               </div>
             </button>
           ))}
